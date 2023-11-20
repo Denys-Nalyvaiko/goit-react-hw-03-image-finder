@@ -8,10 +8,25 @@ import {
 } from './Searchbar.styled';
 
 export class Searchbar extends Component {
+  state = {
+    query: '',
+  };
+
+  handleInputQueryChange = event => {
+    this.setState({ query: event.target.value });
+  };
+
+  handleQueryFormSubmit = event => {
+    event.preventDefault();
+
+    this.props.onSubmit(this.state.query);
+    this.setState({ query: '' });
+  };
+
   render() {
     return (
       <SearchbarHeader>
-        <SearchForm>
+        <SearchForm onSubmit={this.handleQueryFormSubmit}>
           <SearchFormButton type="submit">
             <SearchFormButtonLabel>Search</SearchFormButtonLabel>
           </SearchFormButton>
@@ -21,6 +36,8 @@ export class Searchbar extends Component {
             autoComplete="off"
             autoFocus
             placeholder="Search images and photos"
+            value={this.state.query}
+            onChange={this.handleInputQueryChange}
           />
         </SearchForm>
       </SearchbarHeader>
