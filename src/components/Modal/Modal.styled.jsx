@@ -4,6 +4,7 @@ export const ModalContainer = styled.div`
   position: fixed;
   top: 50%;
   left: 50%;
+  max-height: 90dvh;
   transform: translate(-50%, -50%);
   background-color: transparent;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
