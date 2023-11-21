@@ -12,17 +12,20 @@ export const ModalContainer = styled.div`
 
 export const CloseButton = styled.button`
   position: absolute;
-  top: 0;
-  right: 0;
-  background-color: #007bff;
-  color: #fff;
-  padding: 8px 16px;
-  border: none;
-  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 8px;
+  right: 8px;
+  background-color: transparent;
+  padding: 6px;
+  border: 2px solid #252525;
+  border-radius: 50%;
   cursor: pointer;
+  transition: background-color 200ms ease-in-out 50ms;
 
   &:hover {
-    background-color: #0056b3;
+    background-color: #fafafa;
   }
 `;
 

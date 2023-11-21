@@ -1,8 +1,8 @@
 import { Component } from 'react';
+import { BiSearchAlt } from 'react-icons/bi';
 import {
   SearchForm,
   SearchFormButton,
-  SearchFormButtonLabel,
   SearchFormInput,
   SearchbarHeader,
 } from './Searchbar.styled';
@@ -28,7 +28,7 @@ export class Searchbar extends Component {
       <SearchbarHeader>
         <SearchForm onSubmit={this.handleQueryFormSubmit}>
           <SearchFormButton type="submit">
-            <SearchFormButtonLabel>Search</SearchFormButtonLabel>
+            <BiSearchAlt color="#252525" size="24" />
           </SearchFormButton>
 
           <SearchFormInput

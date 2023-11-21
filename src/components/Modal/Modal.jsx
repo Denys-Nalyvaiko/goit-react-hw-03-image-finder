@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import { IoClose } from 'react-icons/io5';
 import { CloseButton, ModalContainer, Overlay } from './Modal.styled';
 
 const ESC = 'Escape';
@@ -23,7 +24,7 @@ export class Modal extends Component {
       <>
         <ModalContainer>
           <CloseButton type="button" onClick={onClose}>
-            Close
+            <IoClose color="#252525" size="24" />
           </CloseButton>
           <img src={largeImageURL} alt={tags} width="750" />
         </ModalContainer>
