@@ -3,7 +3,7 @@ import { Notify } from 'notiflix';
 import { Container } from './Container/Container.styled';
 import { Searchbar } from './Searchbar/Searchbar';
 import { ImageGallery } from './ImageGallery/ImageGallery';
-import { fetchImageGallery } from 'api/fetchImageGallery';
+import { fetchImageGallery, PER_PAGE } from 'api/fetchImageGallery';
 import { LoadMoreButton } from './Button/Button';
 import { Loader } from './Loader/Loader';
 
@@ -11,12 +11,22 @@ export class App extends Component {
   state = {
     query: '',
     images: [],
+    page: 1,
     isLoading: false,
+    isButtonHidden: true,
   };
 
-  page = 1;
-  perPage = 12;
-  isButtonHidden = true;
+  componentDidUpdate(_, prevState) {
+    const { query, page } = this.state;
+
+    if (prevState.query !== query || prevState.page !== page) {
+      if (page === 1) {
+        this.setState({ isLoading: true });
+      }
+
+      this.processImageGallery(query, page);
+    }
+  }
 
   handleQueryFormSubmit = async query => {
     if (query.trim() === '') {
@@ -24,18 +34,27 @@ export class App extends Component {
       return;
     }
 
-    this.page = 1;
-    this.setState({ query });
-    this.setState({ isLoading: true });
+    this.setState({ query, page: 1, images: [] });
+  };
 
+  handleLoadMoreBtnClick = async () => {
+    this.setState(prevState => ({
+      page: prevState.page + 1,
+    }));
+  };
+
+  processImageGallery = async (query, page) => {
     try {
-      const { hits, totalHits } = await fetchImageGallery(
-        query,
-        this.page,
-        this.perPage
-      );
+      const { hits, totalHits } = await fetchImageGallery(query, page);
 
-      this.searchImageGallery(hits, totalHits);
+      this.setState(prevState => ({
+        images: [...prevState.images, ...hits],
+        isButtonHidden: false,
+      }));
+
+      if (page * PER_PAGE > totalHits) {
+        this.setState({ isButtonHidden: true });
+      }
     } catch (error) {
       Notify.failure(`Failure: ${error.message}`);
     } finally {
@@ -43,45 +62,8 @@ export class App extends Component {
     }
   };
 
-  handleLoadMoreBtnClick = async () => {
-    this.page += 1;
-    this.isButtonHidden = true;
-
-    try {
-      const { hits, totalHits } = await fetchImageGallery(
-        this.state.query,
-        this.page,
-        this.perPage
-      );
-
-      this.increaseImageList(hits, totalHits);
-    } catch (error) {
-      Notify.failure(`Failure: ${error.message}`);
-    }
-  };
-
-  searchImageGallery = (hits, totalHits) => {
-    this.setState({
-      images: hits,
-    });
-    this.isButtonHidden = false;
-
-    if (this.page * this.perPage > totalHits) {
-      this.isButtonHidden = true;
-    }
-  };
-
-  increaseImageList = (hits, totalHits) => {
-    this.setState(prevState => ({ images: [...prevState.images, ...hits] }));
-    this.isButtonHidden = false;
-
-    if (this.page * this.perPage > totalHits) {
-      this.isButtonHidden = true;
-    }
-  };
-
   render() {
-    const { images, isLoading } = this.state;
+    const { images, isLoading, isButtonHidden } = this.state;
 
     return (
       <Container>
@@ -90,7 +72,7 @@ export class App extends Component {
         {Boolean(images.length) && !isLoading && (
           <ImageGallery images={images} />
         )}
-        {!this.isButtonHidden && !isLoading && (
+        {!isButtonHidden && !isLoading && (
           <LoadMoreButton onClick={this.handleLoadMoreBtnClick} />
         )}
       </Container>
