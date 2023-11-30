@@ -20,10 +20,6 @@ export class App extends Component {
     const { query, page } = this.state;
 
     if (prevState.query !== query || prevState.page !== page) {
-      if (page === 1) {
-        this.setState({ isLoading: true });
-      }
-
       this.processImageGallery(query, page);
     }
   }
@@ -45,6 +41,8 @@ export class App extends Component {
 
   processImageGallery = async (query, page) => {
     try {
+      this.setState({ isLoading: true });
+
       const { hits, totalHits } = await fetchImageGallery(query, page);
 
       this.setState(prevState => ({
@@ -68,10 +66,8 @@ export class App extends Component {
     return (
       <Container>
         <Searchbar onSubmit={this.handleQueryFormSubmit} />
+        {Boolean(images.length) && <ImageGallery images={images} />}
         {isLoading && <Loader />}
-        {Boolean(images.length) && !isLoading && (
-          <ImageGallery images={images} />
-        )}
         {!isButtonHidden && !isLoading && (
           <LoadMoreButton onClick={this.handleLoadMoreBtnClick} />
         )}
